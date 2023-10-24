@@ -6,7 +6,7 @@ export type pathLike = `./${string}`;
 export type appOptions = {
 	port: string;
 	mysql: {
-		username: string;
+		user: string;
 		password: string;
 		database: string;
 		host: string;

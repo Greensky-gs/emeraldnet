@@ -116,7 +116,7 @@ export class EmeraldUsersManager {
 
 	private async checkDb() {
 		await this.database(
-			`CREATE TABLE IF NOT EXISTS ${Tables.Users} ( id STRING NOT NULL PRIMARY KEY, login STRING NOT NULL, password STRING NOT NULL, perm STRING NOT NULL, allowedOn LONGTEXT )`,
+			`CREATE TABLE IF NOT EXISTS ${Tables.Users} ( id VARCHAR(255) NOT NULL PRIMARY KEY, login TEXT NOT NULL, password STRING NOT NULL, perm TEXT NOT NULL, allowedOn LONGTEXT )`,
 		);
 		return 'ok';
 	}

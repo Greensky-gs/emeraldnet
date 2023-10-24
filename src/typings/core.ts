@@ -23,7 +23,7 @@ export type DefaultQueryResult = {
 export type QueryResult<T> = T extends DefaultQueryResult ? DefaultQueryResult : T[];
 export type queryFunction = <T = DefaultQueryResult>(query: string) => Promise<QueryResult<T>>
 export enum Tables {
-    Users = 'emerald.users'
+    Users = 'emerald_users'
 }
 export type If<T extends boolean, A, B = any> = T extends true ? A : T extends false ? B : never;
 export type routeLike = `/${string}`

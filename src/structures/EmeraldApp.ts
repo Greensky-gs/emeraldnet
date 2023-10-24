@@ -21,7 +21,9 @@ export class EmeraldApp {
         this._users = new EmeraldUsersManager({
             hash: this.options.hashAlgorithm ?? 'sha512',
             application: this
-        }, this.query)
+        }, (query: string) => {
+            return this.query(query)
+        })
 
         if (!this.options.port) {
             throw new EmeraldError('No port specified')
@@ -86,7 +88,7 @@ export class EmeraldApp {
 
     private configs() {
         this._app.use(cors({
-            origin: `http://127.0.0.1:${process.env.port}`,
+            origin: `http://127.0.0.1:${this.options.port}`,
             optionsSuccessStatus: 200,
         }))
         this._app.use(requestIp.mw())
