@@ -10,15 +10,15 @@ import { EmeraldUsersManager } from "../managers/EmeraldUsersManager";
 
 export class EmeraldApp {
     private options: appOptions;
-    private app: express.Application;
-    private database: Connection;
-    private users: EmeraldUsersManager;
+    private _app: express.Application;
+    private _database: Connection;
+    private _users: EmeraldUsersManager;
 
     constructor(options: appOptions) {
         this.options = options
         this.connect()
 
-        this.users = new EmeraldUsersManager({
+        this._users = new EmeraldUsersManager({
             hash: this.options.hashAlgorithm ?? 'sha512',
             application: this
         }, this.query)
@@ -26,12 +26,21 @@ export class EmeraldApp {
         if (!this.options.port) {
             throw new EmeraldError('No port specified')
         }
-        this.app = express()
+        this._app = express()
         this.configs();
     }
 
+    public get app() {
+        return this._app
+    }
+    public get database() {
+        return this._database
+    }
+    public get users() {
+        return this._users
+    }
     public loginEndpoint(route: routeLike, callback: loginCallback) {
-        this.app.post(route, (req, res) => {
+        this._app.post(route, (req, res) => {
             const usernameParam = this.options.loginParams?.login ?? 'login'
             const passwordParam = this.options.loginParams?.password ?? 'password'
 
@@ -39,20 +48,23 @@ export class EmeraldApp {
             const password = req.body[passwordParam]
 
             if (!username || !password) return callback(req, res, 'no parameters')
-            const user = this.users.getUserByLogin(username)
+            const user = this._users.getUserByLogin(username)
             if (!user) return callback(req, res, 'no user')
             if (!user.match(password)) return callback(req, res, 'invalid password')
 
-            this.users.allow(user.id, req.clientIp)
+            this._users.allow(user.id, req.clientIp)
 
             callback(req, res, 'logged');
         })
+
+        return this;
     }
     public statics(...folders: pathLike[]) {
         for (const folder of folders) {
-            this.app.use(express.static(folder))
+            this._app.use(express.static(folder))
             this.log(`Using ${folder} as static`, 'Info')
         }
+        return this;
     }
 
     public log(text: string, color?: Colors | keyof typeof Colors) {
@@ -67,35 +79,35 @@ export class EmeraldApp {
         }
     }
     public start() {
-        this.app.listen(this.options.port, () => {
+        this._app.listen(this.options.port, () => {
             this.log(`App running on port ${this.options.port}`, 'Good')
         })
     }
 
     private configs() {
-        this.app.use(cors({
+        this._app.use(cors({
             origin: `http://127.0.0.1:${process.env.port}`,
             optionsSuccessStatus: 200,
         }))
-        this.app.use(requestIp.mw())
-        this.app.use(bodyParser.urlencoded({ extended: true }))
-        this.app.use(bodyParser.json())
+        this._app.use(requestIp.mw())
+        this._app.use(bodyParser.urlencoded({ extended: true }))
+        this._app.use(bodyParser.json())
     }
     private query<T = DefaultQueryResult>(query: string): Promise<QueryResult<T>> {
         return new Promise((resolve, reject) => {
-            this.database.query(query, (error, request) => {
+            this._database.query(query, (error, request) => {
                 if (error) return reject(error)
                 resolve(request)
             })
         })
     }
     private connect() {
-        this.database = createConnection(this.options.mysql)
-        if (!this.database) {
+        this._database = createConnection(this.options.mysql)
+        if (!this._database) {
             throw new EmeraldError('Invalid database')
         }
 
-        this.database.connect((err) => {
+        this._database.connect((err) => {
             if (err) throw err
         })
     }

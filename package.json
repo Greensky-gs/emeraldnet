@@ -1,7 +1,7 @@
 {
   "name": "emerald.net",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "dist/index.js",
   "author": "greensky-gs <david.hesliere@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -28,5 +28,25 @@
     "lint": "yarn prettier -w src",
     "gitlint": "yarn lint && git add . && git commit -m \"refactor: ♻️ Run prettier\" && git push",
     "deploy": "yarn install && yarn build && yarn lint && npm publish"
+  },
+  "types": "index.d.ts",
+  "repository": "https://github.com/Greensky-gs/emeraldnet",
+  "bugs": {
+    "url": "https://github.com/Greensky-gs/emeraldnet/issues/new"
+  },
+  "files": [
+    "./dist",
+    "index.d.ts"
+  ],
+  "directories": {
+    "lib": "src"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./src/*": "./dist/*",
+    "./dist/*": "./dist/*"
   }
 }

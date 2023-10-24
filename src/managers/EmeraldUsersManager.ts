@@ -64,7 +64,7 @@ export class EmeraldUsersManager {
         }, this)
 
         this.database(`INSERT INTO ${Tables.Users} ( id, login, password, perm, allowedOn ) VALUES ( "${id}", "${sqllise(login)}", "${this.hash(password)}", "${perm}", "[]" )`)
-        return true
+        return this.cache[id]
     }
     public deleteUser(id: string) {
         if (!this.hasUser(id)) return false
@@ -88,6 +88,7 @@ export class EmeraldUsersManager {
 
         this.cache[user.id] = new EmeraldUser(merged, this)
         this.database(`UPDATE ${Tables.Users} SET ${Object.entries(update).map(([k, v]) => `${k}="${sqllise(v.toString())}"`).join(', ')} WHERE id="${user.id}"`)
+        return true
     }
 	public hash(input: string) {
 		const hash = createHash(this.options.hash);
