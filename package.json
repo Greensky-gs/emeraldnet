@@ -22,5 +22,11 @@
     "@types/uuid": "^9.0.6",
     "prettier": "^3.0.3",
     "tslib": "^2.6.2"
+  },
+  "scripts": {
+    "build": "yarn tsc -b",
+    "lint": "yarn prettier -w src",
+    "gitlint": "yarn lint && git add . && git commit -m \"refactor: ♻️ Run prettier\" && git push",
+    "deploy": "yarn install && yarn build && yarn lint && npm publish"
   }
 }
