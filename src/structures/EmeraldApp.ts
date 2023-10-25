@@ -41,6 +41,13 @@ export class EmeraldApp {
     public get users() {
         return this._users
     }
+    
+    public getConnection(ip: string) {
+        const users = this._users.users.filter(x => x.allowed(ip)).sort((a, b) => b.allowedOn.find(x => x.ip === ip).date - a.allowedOn.find(x => x.ip === ip).date)
+        if (!users.length) return;
+
+        return users[0]
+    }
     public loginEndpoint(route: routeLike, callback: loginCallback) {
         this._app.post(route, (req, res) => {
             const usernameParam = this.options.loginParams?.login ?? 'login'

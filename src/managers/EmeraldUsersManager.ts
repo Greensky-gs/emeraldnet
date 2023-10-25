@@ -11,7 +11,7 @@ import { EmeraldUser } from '../structures/EmeraldUser';
 import { Tables, permResolvable, queryFunction } from '../typings/core';
 import { EmeraldError } from '../structures/EmeraldError';
 import { v4 as uuidV4 } from 'uuid';
-import { removeKey, sqllise } from '../utils/toolbox';
+import { removeKey, resolvePerm, sqllise } from '../utils/toolbox';
 
 export class EmeraldUsersManager {
 	private options: userManagersOptions;
@@ -51,19 +51,19 @@ export class EmeraldUsersManager {
 		}
 	}
 
-    public createUser({ login, password, perm }: { login: string; password: string; perm: PermLevel }) {
+    public createUser({ login, password, perm }: { login: string; password: string; perm: permResolvable }) {
         if (this.getUserByLogin(login)) return false
         const id = uuidV4()
 
         this.cache[id] = new EmeraldUser({
             login,
             password: this.hash(password),
-            perm,
+            perm: resolvePerm(perm),
             id,
             allowedOn: []
         }, this)
 
-        this.database(`INSERT INTO ${Tables.Users} ( id, login, password, perm, allowedOn ) VALUES ( "${id}", "${sqllise(login)}", "${this.hash(password)}", "${perm}", "[]" )`)
+        this.database(`INSERT INTO ${Tables.Users} ( id, login, password, perm, allowedOn ) VALUES ( "${id}", "${sqllise(login)}", "${this.hash(password)}", "${resolvePerm(perm)}", "[]" )`)
         return this.cache[id]
     }
     public deleteUser(id: string) {
