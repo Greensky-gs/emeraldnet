@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { EmeraldApp } from "../structures/EmeraldApp";
-import { If, permResolvable } from "./core";
+import { Request, Response } from 'express';
+import { EmeraldApp } from '../structures/EmeraldApp';
+import { If, permResolvable } from './core';
 
 export type pathLike = `./${string}`;
 export type appOptions = {
@@ -10,13 +10,13 @@ export type appOptions = {
 		password: string;
 		database: string;
 		host: string;
-	}
+	};
 	logs?: boolean;
 	hashAlgorithm?: hashAlgorithm;
 	loginParams?: {
 		login?: string;
 		password?: string;
-	}
+	};
 };
 export enum PermLevel {
 	Root = 0,
@@ -27,7 +27,7 @@ export enum PermLevel {
 export type userConnectionAllowed = {
 	ip: string;
 	date: number;
-}
+};
 export type emeraldUser<Raw extends boolean = false> = {
 	login: string;
 	password: string;
@@ -35,11 +35,14 @@ export type emeraldUser<Raw extends boolean = false> = {
 	id: string;
 	allowedOn: If<Raw, string, userConnectionAllowed[]>;
 };
-export type updateUser = Omit<{
-	[K in keyof emeraldUser]?: emeraldUser[K]
-}, 'allowedOn'> & {
+export type updateUser = Omit<
+	{
+		[K in keyof emeraldUser]?: emeraldUser[K];
+	},
+	'allowedOn'
+> & {
 	id: string;
-}
+};
 export type userManagersOptions = {
 	hash: hashAlgorithm;
 	application: EmeraldApp;
@@ -91,8 +94,25 @@ export type hashAlgorithm =
 	| 'ssl3-md5'
 	| 'ssl3-sha1'
 	| 'whirlpool';
-export type permComparationMethods = 'string' | 'boolean'
-export type permComparation<T extends permComparationMethods> = T extends 'string' ? 'superior' | 'inferior' | 'equal' : T extends 'boolean' ? boolean : never;
-export type permComparator = <T extends permComparationMethods = 'boolean'>(perm: permResolvable, to: permResolvable, method?: T) => permComparation<T>;
-export type loginReason = 'no parameters' | 'no user' | 'invalid password' | 'logged'
-export type loginCallback = (request: Request, response: Response, reason: loginReason) => unknown
+export type permComparationMethods = 'string' | 'boolean';
+export type permComparation<T extends permComparationMethods> =
+	T extends 'string'
+		? 'superior' | 'inferior' | 'equal'
+		: T extends 'boolean'
+		? boolean
+		: never;
+export type permComparator = <T extends permComparationMethods = 'boolean'>(
+	perm: permResolvable,
+	to: permResolvable,
+	method?: T,
+) => permComparation<T>;
+export type loginReason =
+	| 'no parameters'
+	| 'no user'
+	| 'invalid password'
+	| 'logged';
+export type loginCallback = (
+	request: Request,
+	response: Response,
+	reason: loginReason,
+) => unknown;

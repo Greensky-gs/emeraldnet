@@ -26,38 +26,40 @@ export class EmeraldUser {
 		return this.data.id;
 	}
 	public get allowedOn() {
-		return this.data.allowedOn
+		return this.data.allowedOn;
 	}
 	public toJSON() {
 		return {
-			...this.data
-		}
+			...this.data,
+		};
 	}
 
 	public cleanConnections() {
-		const now = Date.now()
-		const valid = this.allowedOn.filter(x => now - x.date < 86400000)
-		const invalid = this.allowedOn.filter(x => now - x.date >= 86400000)
+		const now = Date.now();
+		const valid = this.allowedOn.filter((x) => now - x.date < 86400000);
+		const invalid = this.allowedOn.filter((x) => now - x.date >= 86400000);
 
-		this.data.allowedOn = valid
+		this.data.allowedOn = valid;
 
-		return [valid, invalid]
+		return [valid, invalid];
 	}
 	public allowed(ip: string) {
-		return this.data.allowedOn.some(x => x.ip === ip);
+		return this.data.allowedOn.some((x) => x.ip === ip);
 	}
 	public allow(ip: string) {
-		if (!this.allowedOn.find(x => x.ip === ip)) {
+		if (!this.allowedOn.find((x) => x.ip === ip)) {
 			this.data.allowedOn.push({
 				ip,
-				date: Date.now()
-			})
-		}  else {
-			this.data.allowedOn = this.data.allowedOn.map(x => x.ip === ip ? ({ ...x, date: Date.now() }) : x)
+				date: Date.now(),
+			});
+		} else {
+			this.data.allowedOn = this.data.allowedOn.map((x) =>
+				x.ip === ip ? { ...x, date: Date.now() } : x,
+			);
 		}
 	}
 	public disallow(ip: string) {
-		this.data.allowedOn = this.data.allowedOn.filter(x => x.ip !== ip)
+		this.data.allowedOn = this.data.allowedOn.filter((x) => x.ip !== ip);
 	}
 	public match(input: string) {
 		return this.password === this._manager.hash(input);
