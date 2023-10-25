@@ -1,6 +1,7 @@
 import { Connection } from 'mysql';
 import { PermLevel, appOptions, emeraldUser, loginCallback, pathLike, permComparation, permComparationMethods, updateUser, userConnectionAllowed, userManagersOptions } from './dist/typings/classes'
 import { Colors, permResolvable, queryFunction, routeLike } from './dist/typings/core';
+import express from 'express'
 
 export class EmeraldUsersManager {
     constructor(options: userManagersOptions, database: queryFunction)
@@ -55,7 +56,7 @@ export class EmeraldUser {
 export class EmeraldApp {
     constructor(options: appOptions);
 
-    public get app(): Express.Application;
+    public get app(): express.Application;
     public get database(): Connection;
     public get users(): EmeraldUsersManager;
 

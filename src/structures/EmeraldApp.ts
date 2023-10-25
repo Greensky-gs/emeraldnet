@@ -50,16 +50,20 @@ export class EmeraldApp {
             const password = req.body[passwordParam]
 
             if (!username || !password) return callback(req, res, 'no parameters')
-            const user = this._users.getUserByLogin(username)
-            if (!user) return callback(req, res, 'no user')
-            if (!user.match(password)) return callback(req, res, 'invalid password')
+            const result = this.login(username, password, req.clientIp)
 
-            this._users.allow(user.id, req.clientIp)
-
-            callback(req, res, 'logged');
+            callback(req, res, result)
         })
 
         return this;
+    }
+    public login(login: string, password: string, ip: string) {
+        const user = this._users.getUserByLogin(login)
+        if (!user) return 'no user'
+        if (!user.match(password)) return 'invalid password'
+
+        this._users.allow(user.id, ip)
+        return 'logged'
     }
     public statics(...folders: pathLike[]) {
         for (const folder of folders) {

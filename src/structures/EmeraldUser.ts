@@ -43,6 +43,9 @@ export class EmeraldUser {
 
 		return [valid, invalid]
 	}
+	public allowed(ip: string) {
+		return this.data.allowedOn.some(x => x.ip === ip);
+	}
 	public allow(ip: string) {
 		if (!this.allowedOn.find(x => x.ip === ip)) {
 			this.data.allowedOn.push({
