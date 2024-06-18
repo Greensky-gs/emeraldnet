@@ -8,8 +8,8 @@ This package only works with mysql databases
 
 First you want to install the package :
 
-`npm install emerald.net`
-`yarn add emerald.net`
+`npm install emerald.net`</br>
+`yarn add emerald.net`</br>
 `pnpm add emerald.net`
 
 ### Get started
